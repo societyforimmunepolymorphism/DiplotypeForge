@@ -5,6 +5,10 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 
+# build artifacts
+/dist/
+/build/
+
 # uv / venv
 .venv/
 

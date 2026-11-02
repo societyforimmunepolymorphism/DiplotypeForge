@@ -138,3 +138,34 @@ Staged; M3A was verified before M3B/M3C. All stages complete.
 
 Out of scope this milestone: KIR copy-number, recombination, new population
 models.
+
+## Release hardening — v0.1.0 (DONE)
+
+No new population models. Correctness, interoperability, reproducibility, and
+packaging only.
+
+- **HFX schema correction (PR #10)** integrated; vendored schema used verbatim
+  (no `oneOf`→`anyOf` mutation); upstream commit SHA + canonical checksum
+  recorded in docs and manifests; examples made strictly conformant.
+- **Independent scientific verification**: brute-force matching enumeration +
+  Hypothesis for the feasibility math; analytical diagnostics tests for
+  asymmetric M; per-locus multilocus diagnostics experiment; provenance and
+  reproducibility verified by byte-level output checksums. One bug fixed
+  (order-dependent unordered diplotype keying in the M-based expectation).
+- **Performance docs corrected**: current `O(N)` vs. theoretical `O(H)` pairing;
+  identity/provenance/external-memory distinctions; `tracemalloc` caveat. No
+  performance rewrite.
+- **Packaging**: version 0.1.0; PEP 621 metadata (license, SIP attribution,
+  URLs, classifiers); HFX schema bundled in the wheel; clean-environment install
+  verified. `docs/API_STABILITY.md` defines the supported v0.1 surface.
+- **GL String interop**: `docs/GLSTRING_INTEROP.md` + round-trip corpus; parser/
+  serializer interfaces identified for a future shared `glstring` library.
+- **CI**: GitHub Actions (ruff, pytest, build, wheel smoke, CLI simulation) on
+  Python 3.12 + 3.13; ≥1M benchmark manual-only.
+- **Docs**: README, DESIGN, CONFIG, PERFORMANCE, OPEN_QUESTIONS, CHANGELOG, and
+  a DiplotypeForge↔TissueTypeForge relationship doc.
+
+### Gate
+Full suite green, ruff clean, wheel builds and installs cleanly in a fresh
+environment, end-to-end CLI simulation on a strictly valid HFX file, and
+`RELEASE_READINESS.md` produced. **Status: met.**

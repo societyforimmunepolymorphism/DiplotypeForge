@@ -194,6 +194,25 @@ are recorded in every manifest.
 - KIR copy-number modeling, recombination, and additional population models are
   out of scope.
 
+## Related specifications and projects
+
+- **SIP HFX specification** — the authoritative Haplotype Frequency eXchange
+  schema: <https://github.com/societyforimmunepolymorphism/hfx>
+  (vendored at merge commit `a434a217…`; see
+  `src/diplotypeforge/adapters/schema/README.md`).
+- **GL String specification** — Genotype List String grammar (Milius et al.
+  2013; Mack et al. 2023). Accepted/produced subset: `docs/GLSTRING_INTEROP.md`.
+- **TissueTypeForge** — companion project simulating laboratory typing
+  observations from known diplotypes. Relationship:
+  `docs/DIPLOTYPEFORGE_AND_TISSUETYPEFORGE.md`.
+- **2012 IHIW paper** motivating the population-structure experiments:
+  Maiers M, et al. *16th IHIW: Global analysis of registry HLA haplotypes from
+  20 million individuals.* Int J Immunogenet. 2012.
+
+Further documentation: `docs/DESIGN.md`, `docs/CONFIG.md`,
+`docs/API_STABILITY.md`, `docs/PERFORMANCE.md`, `docs/OPEN_QUESTIONS.md`,
+`CHANGELOG.md`.
+
 ## Citation
 
 If you use DiplotypeForge, please cite the Wahlund and first-generation

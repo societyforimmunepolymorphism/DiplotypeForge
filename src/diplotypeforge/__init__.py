@@ -36,7 +36,7 @@ from .model.population import (
 from .sampling.origin import OriginModel, OriginModelError
 from .simulator import SimulationResult, Simulator
 
-__version__ = "0.2.0"
+__version__ = "0.1.0"
 
 __all__ = [
     "Allele",

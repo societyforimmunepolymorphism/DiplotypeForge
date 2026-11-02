@@ -1,16 +1,34 @@
 [project]
 name = "diplotypeforge"
-version = "0.2.0"
+version = "0.1.0"
 description = "Simulate phased diploid genotypes from population haplotype-frequency distributions (SIP HLA Forge)."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "Apache-2.0" }
-authors = [{ name = "Society for Immune Polymorphism" }]
+authors = [{ name = "Society for Immune Polymorphism (SIP)" }]
+maintainers = [{ name = "Society for Immune Polymorphism (SIP)" }]
 keywords = ["HLA", "KIR", "haplotype", "diplotype", "simulation", "HFX", "GL String", "population genetics"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Typing :: Typed",
+]
 dependencies = [
     "numpy>=1.26",
     "jsonschema>=4.21",
 ]
+
+[project.urls]
+Homepage = "https://github.com/societyforimmunepolymorphism/DiplotypeForge"
+Repository = "https://github.com/societyforimmunepolymorphism/DiplotypeForge"
+Issues = "https://github.com/societyforimmunepolymorphism/DiplotypeForge/issues"
+"HFX specification" = "https://github.com/societyforimmunepolymorphism/hfx"
 
 [project.scripts]
 diplotypeforge = "diplotypeforge.cli:main"

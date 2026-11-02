@@ -106,6 +106,18 @@ The adapter **validates each HFX document against the authoritative JSON Schema
 by default** (`hfx.schema.json` v0.1.1, vendored into the package), using
 `jsonschema`. Documents that do not conform are **rejected** by default.
 
+**Schema correction integrated (PR #10).** The vendored schema is the
+authoritative upstream schema used **verbatim** (merge commit
+`a434a217ff7c8f13a73d04b7635e34e76b3ef310`; version unchanged at `0.1.1`). An
+earlier build applied an in-memory `oneOf`→`anyOf` relaxation of
+`frequencyDataLocation`; that workaround has been **removed**. In the corrected
+schema the two `oneOf` branches are mutually exclusive — the literal `"inline"`
+matches only the `const` branch and a URI matches only the
+`^(https?|ftps?|file)://.+` pattern branch — so validation runs against the
+schema with **no mutation**. The upstream commit SHA and the canonical schema
+SHA-256 are recorded in `src/diplotypeforge/adapters/schema/README.md` and in
+every run `manifest.json` (`hfx_schema`).
+
 An explicit **lenient mode** (`strict=False` / `--lenient`) is provided for
 nonconforming *historical* files: in lenient mode a schema violation is demoted
 to a warning, unknown metadata keys are preserved as opaque provenance, and the

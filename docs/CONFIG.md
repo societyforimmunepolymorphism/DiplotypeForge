@@ -53,7 +53,7 @@ Population count constraints by mode:
 n_individuals = 10000
 seed = 20120815
 mode = "single_population"
-lenient_hfx = true   # only needed for historical HFX files lacking `version`
+# lenient_hfx = true   # only for historical HFX files lacking `version`
 
 [[populations]]
 id = "CAU"
@@ -127,3 +127,43 @@ The matrix need not be symmetric: `M[i,j]` is the probability the **first**
 haplotype comes from population `i` and the **second** from `j`, so an
 asymmetric matrix gives different laws to the two sampled haplotypes while
 per-haplotype provenance is retained.
+
+## `[transformation]` (optional)
+
+An optional post-sampling, frequency-preserving homozygosity transform. It
+changes the number of homozygous diplotypes while preserving **every haplotype
+count exactly** — a mechanism for Hardy–Weinberg disequilibrium distinct from
+population structure. It never resamples; it rearranges the sampled copies.
+
+| key | type | description |
+|-----|------|-------------|
+| `enabled` | bool | turn the transform on (default false) |
+| `type` | string | `homozygosity` (only supported type) |
+| `strategy` | string | `reassignment` (only supported strategy) |
+| `target_fraction` | float ∈ [0,1] | target homozygous **fraction**; exactly one of fraction/delta |
+| `target_delta` | float | signed change in homozygous fraction; exactly one of fraction/delta |
+
+```toml
+[simulation]
+n_individuals = 5000
+seed = 20120815
+mode = "single_population"
+
+[[populations]]
+id = "CAU"
+hfx = "cau.hfx-metadata.json"
+
+[transformation]
+enabled = true
+type = "homozygosity"
+strategy = "reassignment"
+target_fraction = 0.30
+```
+
+The transform reports the initial / requested / achieved homozygosity, the exact
+feasible `[min, max]` range, the number of operations, whether the target was
+reached, and a reason for any rounding/clamping (the target is snapped to the
+nearest feasible, reachable count rather than silently substituted). The
+transformed sample has no closed-form diplotype distribution and is **not**
+described as sampled from the origin matrix `M`. A standalone transform of an
+existing dataset is available via the `diplotypeforge transform` CLI subcommand.
