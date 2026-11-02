@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://phycus.org/hfx.schema.json",
+  "title": "HFX Submission",
+  "description": "Schema for HFX submission",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Version of the HFX schema",
+      "const": "0.1.1"
+    },
+    "metadata": {
+      "description": "metadata corresponding to frequency file",
+      "type": "object",
+      "properties": {
+        "creationDateTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "outputResolution": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/hlaResolution"
+            },
+            {
+              "$ref": "#/$defs/kirResolution"
+            }
+          ]
+        },
+        "hfeMethod": {
+          "$ref": "#/$defs/hfeMethod"
+        },
+        "cohortDescription": {
+          "$ref": "#/$defs/cohort"
+        },
+        "nomenclatureUsed": {
+          "$ref": "#/$defs/nomenclature"
+        },
+        "producer": {
+          "$ref": "#/$defs/producer"
+        },
+        "frequencyLocation": {
+          "$ref": "#/$defs/frequencyDataLocation"
+        },
+        "frequencyFileHeader": {
+          "$ref": "#/$defs/frequencyFileHeader"
+        },
+        "license": {
+          "$ref": "#/$defs/license"
+        },
+        "hfxID": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI can be http:// or file://data.csv"
+        }
+      },
+      "required": [
+        "outputResolution",
+        "hfeMethod",
+        "cohortDescription",
+        "nomenclatureUsed",
+        "frequencyLocation"
+      ],
+      "additionalProperties": false
+    },
+    "frequencyData": {
+      "$ref": "#/$defs/frequencyData"
+    }
+  },
+  "required": [
+    "version",
+    "metadata"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "hlaResolution": {
+      "description": "an array of HLA locus and resolution pairs",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "locus": {
+            "type": "string"
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "G",
+              "P",
+              "g",
+              "allele-family",
+              "protein-sequence",
+              "coding-sequence",
+              "genomic-sequence",
+              "Serology"
+            ],
+            "description": "set of resolutions for a given locus in frequencies"
+          }
+        },
+        "required": [
+          "locus",
+          "resolution"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "uniqueItems": false
+    },
+    "kirResolution": {
+      "description": "an array of KIR locus and resolution pairs",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "locus": {
+            "type": "string"
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "protein-sequence",
+              "coding-sequence",
+              "genomic-sequence"
+            ],
+            "description": "set of resolutions for a given KIR locus in frequencies"
+          }
+        },
+        "required": [
+          "locus",
+          "resolution"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "hfeMethod": {
+      "description": "Method of HFE generation",
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "parameter": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "parameter",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "method",
+        "parameters"
+      ],
+      "additionalProperties": false
+    },
+    "cohort": {
+      "description": "Description of the Cohort",
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "The species the Hf set is based on"
+        },
+        "population": {
+          "type": "array",
+          "description": "Population Details",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Short population name/code"
+              },
+              "geoLocation": {
+                "type": "object",
+                "properties": {
+                  "ISO3166": {
+                    "type": "string",
+                    "description": "https://en.wikipedia.org/wiki/ISO_3166-2 and 3166-1"
+                  },
+                  "subdivision": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Name of State/Province"
+                        }
+                      }
+                    },
+                    "description": "Subdivision of or collection of subdivision of ISO_3166-1/2"
+                  },
+                  "latitude": {
+                    "type": "string",
+                    "description": "latitude degrees 2 left of decimal ISO 6709"
+                  },
+                  "longitude": {
+                    "type": "string",
+                    "description": "longitude degrees 3 less than decimal ISO 6709"
+                  }
+                },
+                "required": [
+                  "ISO3166"
+                ]
+              },
+              "ethnicity": {
+                "type": "string",
+                "description": "Optional ancestry label"
+              },
+              "populationDescription": {
+                "type": "string",
+                "description": "Description of the cohort population"
+              },
+              "populationSize": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "description": "Size of this population in the sample"
+              },
+              "language": {
+                "type": "string",
+                "description": "spoken language of the population, https://www.ethnologue.com/codes/"
+              },
+              "religion": {
+                "type": "string",
+                "description": "Religion of population"
+              }
+            },
+            "required": [
+              "name",
+              "geoLocation"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "cohortSize": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "description": "Number of individuals (N) in the sample to produce frequency"
+        },
+        "dataSource": {
+          "type": "string",
+          "description": "Origin of data when generating frequency. Registry, clinic, etc.."
+        }
+      },
+      "required": [
+        "species",
+        "population",
+        "cohortSize"
+      ],
+      "additionalProperties": false
+    },
+    "nomenclature": {
+      "description": "Nomenclature used to produce frequencies",
+      "type": "object",
+      "properties": {
+        "database": {
+          "type": "string",
+          "enum": [
+            "IPD-IMGT/HLA",
+            "IPD-KIR",
+            "IPD-MHC",
+            "IPD-NHKIR"
+          ],
+          "description": "IPD main groups"
+        },
+        "group": {
+          "type": "string",
+          "description": "Groups such as NHP, DLA, FISH etc.."
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the IPD database"
+        }
+      },
+      "required": [
+        "database",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "frequencyFileHeader": {
+      "description": "Optional mapping of frequency CSV header names to expected field names",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "producer": {
+      "type": "object",
+      "description": "Individual or Organization submitting the frequency data",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of Individual/Group producing the frequency data"
+        },
+        "organisation": {
+          "type": "string",
+          "description": "Name of Organization producing the frequency data"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Contact email for the producer"
+        },
+        "publication": {
+          "type": "object",
+          "properties": {
+            "doi": {
+              "type": "string",
+              "description": "DOI of the publication"
+            },
+            "year": {
+              "type": "string",
+              "description": "Date of publication"
+            }
+          }
+        }
+      },
+      "required": [
+        "name",
+        "organisation",
+        "email"
+      ],
+      "additionalProperties": false
+    },
+    "frequencyData": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "haplotype": {
+            "type": "string",
+            "pattern": "^[gA-Z-~*:0-9\\.;>\\[\\]]*$",
+            "description": "haplotype in GL String format"
+          },
+          "frequency": {
+            "type": "number",
+            "description": "Frequency of the haplotype"
+          }
+        },
+        "required": [
+          "haplotype",
+          "frequency"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "frequencyDataLocation": {
+      "oneOf": [
+        {
+          "const": "inline",
+          "description": "Reserved literal indicating frequency data is embedded in the document via the top-level 'frequencyData' array"
+        },
+        {
+          "type": "string",
+          "pattern": "^(https?|ftps?|file)://.+",
+          "format": "uri",
+          "description": "URI referencing an external frequency file, e.g. http://, https://, ftp:// or file://data.csv"
+        }
+      ],
+      "description": "Frequency is either inlined (the literal 'inline') or available at the given URI"
+    },
+    "license": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "SPDX identifier https://spdx.org/licenses/"
+        },
+        "licenseDescription": {
+          "type": "string",
+          "description": "Description of the license, if different from SPDX"
+        }
+      }
+    }
+  }
+}

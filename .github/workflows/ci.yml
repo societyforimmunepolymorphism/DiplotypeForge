@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: lint + test (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install project (dev extras)
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Ruff (lint)
+        run: ruff check src tests examples
+
+      - name: Pytest
+        run: pytest -q
+
+  build-and-smoke:
+    name: build + wheel smoke + CLI simulation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Build sdist + wheel
+        run: uv build
+
+      - name: Verify the wheel bundles the HFX schema
+        run: |
+          python - <<'PY'
+          import glob, zipfile, sys
+          whl = glob.glob("dist/*.whl")[0]
+          names = zipfile.ZipFile(whl).namelist()
+          needed = "diplotypeforge/adapters/schema/hfx.schema.json"
+          assert needed in names, f"schema missing from wheel: {needed}\n{names}"
+          print("OK: schema bundled in", whl)
+          PY
+
+      - name: Clean-environment install from the built wheel
+        run: |
+          uv venv /tmp/clean --python 3.12
+          uv pip install --python /tmp/clean/bin/python dist/*.whl
+
+      - name: Wheel smoke test (import + schema load, isolated from source tree)
+        run: |
+          cd /tmp
+          /tmp/clean/bin/python - <<'PY'
+          import diplotypeforge as df
+          from diplotypeforge.adapters.hfx import load_schema, schema_provenance
+          print("version:", df.__version__)
+          s = load_schema()
+          assert s["$id"].endswith("hfx.schema.json")
+          assert schema_provenance()["schema_version"] == "0.1.1"
+          print("OK: wheel import + schema load")
+          PY
+
+      - name: Representative CLI simulation (strictly valid HFX)
+        run: |
+          WORK=$(mktemp -d)
+          cp examples/cau.hfx-metadata.json "$WORK/"
+          cp examples/simulation.toml "$WORK/"
+          sed -i 's/n_individuals = 10000/n_individuals = 1000/' "$WORK/simulation.toml"
+          cd "$WORK"
+          /tmp/clean/bin/diplotypeforge validate simulation.toml
+          /tmp/clean/bin/diplotypeforge simulate simulation.toml
+          /tmp/clean/bin/diplotypeforge summarize output >/dev/null
+          test -f output/diplotypes.tsv
+          test -f output/manifest.json
+          echo "OK: end-to-end CLI simulation"
+
+  # The >=1M-individual benchmark is intentionally NOT run on every PR.
+  # Trigger it manually from the Actions tab.
+  benchmark:
+    name: large benchmark (manual only)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+      - name: Install project
+        run: uv pip install --system -e ".[dev]"
+      - name: Run benchmark (1,000,000 individuals)
+        run: python examples/benchmark_large.py --n 1000000 --haplotypes 2000

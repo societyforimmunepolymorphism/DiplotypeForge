@@ -1,0 +1,7 @@
+# Standalone transform config: decrease homozygosity to its feasible minimum.
+[transformation]
+enabled = true
+type = "homozygosity"
+strategy = "reassignment"
+target_fraction = 0.0
+seed = 999

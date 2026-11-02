@@ -1,0 +1,17 @@
+# Worked example: simulate a single population, then increase homozygosity to
+# 30% while preserving every haplotype count exactly.
+[simulation]
+n_individuals = 5000
+seed = 20120815
+mode = "single_population"
+output_dir = "output"
+
+[[populations]]
+id = "CAU"
+hfx = "../cau.hfx-metadata.json"
+
+[transformation]
+enabled = true
+type = "homozygosity"
+strategy = "reassignment"
+target_fraction = 0.30

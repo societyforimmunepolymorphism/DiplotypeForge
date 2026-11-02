@@ -1,0 +1,46 @@
+{
+  "version": "0.1.1",
+  "metadata": {
+    "outputResolution": [
+      {
+        "locus": "A",
+        "resolution": "g"
+      }
+    ],
+    "hfeMethod": {
+      "method": "direct",
+      "parameters": []
+    },
+    "cohortDescription": {
+      "species": "Homo sapiens",
+      "population": [
+        {
+          "name": "POP1",
+          "geoLocation": {
+            "ISO3166": "US"
+          }
+        }
+      ],
+      "cohortSize": 1000
+    },
+    "nomenclatureUsed": {
+      "database": "IPD-IMGT/HLA",
+      "version": "3.20.0"
+    },
+    "frequencyLocation": "inline"
+  },
+  "frequencyData": [
+    {
+      "haplotype": "A*01:01",
+      "frequency": 0.7
+    },
+    {
+      "haplotype": "A*02:01",
+      "frequency": 0.2
+    },
+    {
+      "haplotype": "A*03:01",
+      "frequency": 0.1
+    }
+  ]
+}

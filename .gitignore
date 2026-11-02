@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# build artifacts
+/dist/
+/build/
+
+# uv / venv
+.venv/
+
+# Generated simulation output
+examples/output/
+examples/output_experiment/
+examples/two_population/output/
+output/
+examples/transformation/output/
+examples/transformation/transform_out/
+output_transform/
+examples/output_benchmark/
+examples/output_benchmark_tr/
+examples/output_benchmark_smoke/
+
+# macOS
+.DS_Store

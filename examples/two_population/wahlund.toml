@@ -1,0 +1,14 @@
+[simulation]
+n_individuals = 20000
+seed = 20120815
+mode = "wahlund"
+weights = [0.5, 0.5]
+output_dir = "output"
+
+[[populations]]
+id = "POP1"
+hfx = "pop1.hfx-metadata.json"
+
+[[populations]]
+id = "POP2"
+hfx = "pop2.hfx-metadata.json"

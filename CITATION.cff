@@ -1,0 +1,47 @@
+cff-version: 1.2.0
+title: DiplotypeForge
+message: >-
+  If you use DiplotypeForge, please cite this software and the simulation-design
+  references below.
+type: software
+authors:
+  - name: Society for Immune Polymorphism (SIP)
+    website: "https://github.com/societyforimmunepolymorphism"
+repository-code: "https://github.com/societyforimmunepolymorphism/DiplotypeForge"
+url: "https://github.com/societyforimmunepolymorphism/DiplotypeForge"
+abstract: >-
+  Reproducible simulation of phased HLA diplotypes from HFX haplotype
+  frequencies, including population mixtures, admixture, Hardy-Weinberg
+  disequilibrium, and GL String output. A component of the SIP HLA Forge
+  initiative.
+keywords:
+  - HLA
+  - KIR
+  - immunogenetics
+  - population genetics
+  - haplotype
+  - diplotype
+  - simulation
+  - HFX
+  - GL String
+license: Apache-2.0
+version: 0.1.0
+references:
+  - type: article
+    title: >-
+      16th IHIW: Global analysis of registry HLA haplotypes from 20 million
+      individuals
+    authors:
+      - family-names: Maiers
+        given-names: Martin
+    journal: International Journal of Immunogenetics
+    year: 2012
+  - type: article
+    title: >-
+      Genotype List String: a grammar for describing HLA and KIR genotyping
+      results in a text string
+    authors:
+      - family-names: Milius
+        given-names: Robert P.
+    journal: Tissue Antigens
+    year: 2013
