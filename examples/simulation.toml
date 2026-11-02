@@ -12,10 +12,9 @@ mode = "single_population"
 output_dir = "output"
 compress = false
 
-# HFX validation is strict (schema-conformant) by default. The bundled official
-# CAU example is a *historical* file that predates the `version` field, so it is
-# loaded in lenient mode. New, conformant HFX files do not need this flag.
-lenient_hfx = true
+# HFX validation is strict (schema-conformant) by default. The bundled CAU
+# example conforms to the authoritative HFX v0.1.1 schema, so no lenient flag
+# is required. Set `lenient_hfx = true` only for nonconforming historical files.
 
 [[populations]]
 id = "CAU"

@@ -104,12 +104,12 @@ def test_missing_file_raises():
         read_hfx("/nonexistent/path.hfx-metadata.json")
 
 
-def test_official_inline_example_loads_in_lenient_mode():
-    # The vendored official CAU example lacks a 'version' field -> nonconforming,
-    # so it loads in lenient mode (historical file).
+def test_official_inline_example_loads_in_strict_mode():
+    # The vendored CAU example now carries 'version': '0.1.1' and conforms to the
+    # authoritative schema, so it loads under default (strict) validation.
     example = Path(__file__).resolve().parents[1] / "examples" / "cau.hfx-metadata.json"
     if not example.exists():
         pytest.skip("example not present")
-    pop = read_hfx(example, HFXOptions(lenient=True))
+    pop = read_hfx(example)
     assert pop.distribution.locus_names == ("HLA-A", "HLA-B", "HLA-C", "HLA-DRB1", "HLA-DQB1")
     assert pop.distribution.n_entries > 50

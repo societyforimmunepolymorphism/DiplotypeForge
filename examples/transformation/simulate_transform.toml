@@ -5,7 +5,6 @@ n_individuals = 5000
 seed = 20120815
 mode = "single_population"
 output_dir = "output"
-lenient_hfx = true
 
 [[populations]]
 id = "CAU"

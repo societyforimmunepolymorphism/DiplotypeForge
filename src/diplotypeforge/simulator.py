@@ -13,7 +13,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .adapters.hfx import HFXOptions, read_hfx
+from .adapters.hfx import HFXOptions, read_hfx, schema_provenance
 from .config import SimulationConfig
 from .expectation import marginal_ancestry_proportions
 from .model.core import SimulatedIndividual
@@ -378,6 +378,7 @@ class Simulator:
                 }
                 for pop, path in zip(self.source_populations, self._input_paths, strict=False)
             ],
+            "hfx_schema": schema_provenance(),
             "populations": [
                 {
                     "id": p.population_id,

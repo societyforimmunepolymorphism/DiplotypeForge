@@ -3,10 +3,17 @@
 Implements reading of the HFX (Haplotype Frequency eXchange) format as defined
 by ``societyforimmunepolymorphism/hfx`` schema v0.1.1. See docs/DESIGN.md §2.
 
-Posture (reviewer revisions 3 & 4):
+Posture (reviewer revisions 3 & 4; HFX schema correction integrated):
   * **Schema validation is on by default** — each document is validated against
     the vendored authoritative ``hfx.schema.json`` using ``jsonschema``;
     nonconforming documents are rejected.
+  * The vendored schema is the authoritative upstream schema used **verbatim**
+    (``societyforimmunepolymorphism/hfx`` PR #10, merge commit
+    ``a434a217ff7c8f13a73d04b7635e34e76b3ef310``, document version ``0.1.1``).
+    No in-memory mutation is performed during validation; the earlier
+    ``oneOf``→``anyOf`` relaxation of ``frequencyDataLocation`` is removed
+    because the corrected schema's ``oneOf`` is internally consistent (``"inline"``
+    matches only the ``const`` branch; a URI matches only the pattern branch).
   * An explicit **lenient mode** (``lenient=True``) is provided for nonconforming
     historical files: schema violations and unknown keys are demoted to warnings,
     and the known typo ``outputRResolution`` is tolerated.
@@ -91,24 +98,36 @@ def load_schema() -> dict:
     return json.loads(text)
 
 
-def _normalized_schema() -> dict:
-    """Return the authoritative schema with a known upstream defect relaxed.
+# Upstream provenance of the vendored schema. Recorded in run manifests so a
+# dataset can be tied to the exact authoritative schema it was validated against.
+# Source: societyforimmunepolymorphism/hfx, PR #10, merge commit below. The
+# correction did not change the document version (still "0.1.1").
+HFX_SCHEMA_UPSTREAM_REPO = "societyforimmunepolymorphism/hfx"
+HFX_SCHEMA_UPSTREAM_COMMIT = "a434a217ff7c8f13a73d04b7635e34e76b3ef310"
+HFX_SCHEMA_VERSION = "0.1.1"
 
-    The v0.1.1 ``frequencyDataLocation`` definition is ``oneOf`` a ``uri``-format
-    string and ``enum:["inline"]``. The literal ``"inline"`` validates against
-    *both* branches (a plain string trivially satisfies the ``uri`` branch since
-    ``format`` is an annotation, not an assertion, in JSON Schema 2020-12), so
-    ``oneOf`` spuriously fails for *every* document. This is an upstream schema
-    bug (it should be ``anyOf``). We relax that single ``oneOf`` to ``anyOf``
-    in-memory so default conformance checking is meaningful rather than broken.
-    The on-disk vendored schema is left untouched for fidelity.
+
+def schema_checksum() -> str:
+    """Return a stable SHA-256 over the *semantic* content of the vendored schema.
+
+    Computed over the canonical JSON form (sorted keys, no insignificant
+    whitespace) so the checksum is invariant to pretty-printing / key ordering
+    and depends only on the schema's meaning.
     """
-    schema = load_schema()
-    defs = schema.get("$defs", {})
-    fdl = defs.get("frequencyDataLocation")
-    if isinstance(fdl, dict) and "oneOf" in fdl and "anyOf" not in fdl:
-        fdl["anyOf"] = fdl.pop("oneOf")
-    return schema
+    import hashlib
+
+    canonical = json.dumps(load_schema(), sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def schema_provenance() -> dict[str, str]:
+    """Return a manifest-ready provenance record for the vendored HFX schema."""
+    return {
+        "upstream_repo": HFX_SCHEMA_UPSTREAM_REPO,
+        "upstream_commit": HFX_SCHEMA_UPSTREAM_COMMIT,
+        "schema_version": HFX_SCHEMA_VERSION,
+        "canonical_sha256": schema_checksum(),
+    }
 
 
 def _violation(lenient: bool, message: str) -> None:
@@ -126,8 +145,16 @@ def validate_against_schema(doc: dict, lenient: bool) -> list[str]:
     mode any violation raises :class:`HFXError`; in lenient mode violations are
     collected and warned. ``format`` is treated as an annotation (not asserted),
     per JSON Schema 2020-12 defaults.
+
+    The authoritative schema from ``societyforimmunepolymorphism/hfx`` v0.1.1
+    (merge commit ``a434a217ff7c8f13a73d04b7635e34e76b3ef310``, PR #10) is used
+    **verbatim**: no in-memory mutation is performed. The corrected
+    ``frequencyDataLocation`` ``oneOf`` is now internally consistent — the
+    literal ``"inline"`` matches only the ``const`` branch, and a URI matches
+    only the pattern-constrained branch — so the historical ``oneOf``→``anyOf``
+    relaxation is no longer required.
     """
-    schema = _normalized_schema()
+    schema = load_schema()
     validator = jsonschema.Draft202012Validator(schema)
     errors = sorted(validator.iter_errors(doc), key=lambda e: list(e.path))
     messages = []
