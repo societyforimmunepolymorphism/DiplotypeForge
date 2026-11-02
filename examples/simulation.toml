@@ -1,0 +1,22 @@
+# Working example: single-population random-mating simulation using the
+# official HFX inline-frequency CAU example (5-locus HLA, g-group resolution).
+#
+#   diplotypeforge validate  examples/simulation.toml
+#   diplotypeforge simulate  examples/simulation.toml
+#   diplotypeforge summarize examples/output
+
+[simulation]
+n_individuals = 10000
+seed = 20120815          # Maiers et al. (2012), 16th IHIW
+mode = "single_population"
+output_dir = "output"
+compress = false
+
+# HFX validation is strict (schema-conformant) by default. The bundled official
+# CAU example is a *historical* file that predates the `version` field, so it is
+# loaded in lenient mode. New, conformant HFX files do not need this flag.
+lenient_hfx = true
+
+[[populations]]
+id = "CAU"
+hfx = "cau.hfx-metadata.json"

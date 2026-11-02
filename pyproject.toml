@@ -1,0 +1,49 @@
+[project]
+name = "diplotypeforge"
+version = "0.2.0"
+description = "Simulate phased diploid genotypes from population haplotype-frequency distributions (SIP HLA Forge)."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Society for Immune Polymorphism" }]
+keywords = ["HLA", "KIR", "haplotype", "diplotype", "simulation", "HFX", "GL String", "population genetics"]
+dependencies = [
+    "numpy>=1.26",
+    "jsonschema>=4.21",
+]
+
+[project.scripts]
+diplotypeforge = "diplotypeforge.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.5",
+]
+viz = [
+    "matplotlib>=3.8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/diplotypeforge"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/diplotypeforge/adapters/schema/hfx.schema.json" = "diplotypeforge/adapters/schema/hfx.schema.json"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W", "N", "C4", "SIM"]
+ignore = ["N818"]  # allow Error-suffixed exception names without "Error" where domain-named
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+pythonpath = ["src", "."]
