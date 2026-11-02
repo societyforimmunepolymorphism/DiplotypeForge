@@ -148,7 +148,13 @@ def expected_diplotype_distribution(
         for b in range(a, h):
             val = float(p_ordered[a, a]) if a == b else float(p_ordered[a, b] + p_ordered[b, a])
             if val > 0:
-                ukey = (keys[a], keys[b])
+                # Canonicalize the unordered key by sorting the two haplotype
+                # keys, so it matches the observed keying (Diplotype.unordered_key
+                # sorts k1 <= k2) regardless of the haplotype *union* order, which
+                # itself depends on input row order. Without this, the TV distance
+                # to observed data would spuriously depend on input ordering.
+                ka, kb = keys[a], keys[b]
+                ukey = (ka, kb) if ka <= kb else (kb, ka)
                 unordered[ukey] = val
 
     return DiplotypeExpectation(haplotype_keys=keys, ordered=ordered, unordered=unordered)

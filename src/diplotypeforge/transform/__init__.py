@@ -10,6 +10,12 @@ from .feasibility import (
     count_homozygous,
     haplotype_counts,
 )
+from .per_locus import (
+    PerLocusComparison,
+    PerLocusDiagnostics,
+    compare_per_locus,
+    per_locus_diagnostics,
+)
 from .reassignment import (
     ReassignmentStrategy,
     TransformationResult,
@@ -21,6 +27,8 @@ from .reassignment import (
 
 __all__ = [
     "HomozygosityFeasibility",
+    "PerLocusComparison",
+    "PerLocusDiagnostics",
     "ReassignmentStrategy",
     "TransformDiagnostics",
     "TransformationResult",
@@ -28,8 +36,10 @@ __all__ = [
     "TransformationTarget",
     "analyze_counts",
     "analyze_feasibility",
+    "compare_per_locus",
     "count_homozygous",
     "haplotype_counts",
+    "per_locus_diagnostics",
     "resolve_target_count",
     "transform_diagnostics",
     "transform_homozygosity",
